@@ -1,0 +1,5 @@
+FROM golang:1.20
+WORKDIR /build
+COPY multiply.go .
+# Выполняем команды в одном RUN для уменьшения количества слоев образа
+RUN go mod init multiply && go build -o multiply .
