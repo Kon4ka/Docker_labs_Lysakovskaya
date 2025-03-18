@@ -1,0 +1,39 @@
+services:
+  # Сервис для WordPress
+  wordpress:
+    image: wordpress:latest # Образ WordPress, используем последнюю стабильную версию. Да это не очень правильно. Но чем мы хуже индусов
+    container_name: wordpress # Уникальное имя контейнера для WordPress
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_NAME=exampledb
+      - WORDPRESS_DB_USER=exampleuser
+      - WORDPRESS_DB_PASSWORD=examplepassword
+    ports:
+      - "8080:80"
+    networks:
+      - wordpress-backend # Внутренняя сеть для связи с базой данных
+      - wordpress-frontend # Публичная сеть для доступа снаружи
+
+  # Сервис для MySQL базы данных
+  db:
+    image: mysql:latest # Используем образ MySQL, последнюю стабильную версию. Да это не очень правильно. Но чем мы хуже индусов
+    container_name: mysql-db # Уникальное имя контейнера для базы данных
+    environment:
+      - MYSQL_ROOT_PASSWORD=examplepassword
+      - MYSQL_DATABASE=exampledb
+      - MYSQL_USER=exampleuser
+      - MYSQL_PASSWORD=examplepassword
+    volumes:
+      - mysql-data:/var/lib/mysql # Храним данные MySQL в volume
+    networks:
+      - wordpress-backend # Внутренняя сеть для взаимодействия с WordPress
+
+volumes:
+  # Volume для хранения данных MySQL
+  mysql-data:
+
+
+networks:
+  # Используем driver bridge по умолчанию
+  wordpress-backend: # Внутренняя сеть для взаимодействия между сервисами
+  wordpress-frontend: # Публичная сеть для доступа к WordPress снаружи
