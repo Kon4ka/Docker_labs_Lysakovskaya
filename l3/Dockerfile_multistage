@@ -1,0 +1,13 @@
+# 1)
+FROM maven:3.8.4-openjdk-11 AS builder
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn package -DskipTests
+# 2)
+FROM gcr.io/distroless/java17-debian11:latest
+WORKDIR /app
+COPY --from=builder /app/target/my-app-1.0-SNAPSHOT.jar my-app.jar
+ENTRYPOINT ["java", "-jar", "my-app.jar"]
+
